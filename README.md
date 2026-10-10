@@ -40,7 +40,7 @@ The fastest way to spin up a node is using Docker.
 
 ### Step 1: Clone the configurations
 ```bash
-git clone https://github.com/Vera-Network/vera-node-releases.git
+git clone https://github.com/Vera-SmartChain/vera-node-releases.git
 cd vera-node-releases/testnet
 ```
 
@@ -62,11 +62,11 @@ docker logs -f vera-node
 
 ## 📥 Manual Downloads (Bare-Metal)
 
-If you prefer to run the binary directly on your server (without Docker), download the latest releases from the [Releases](https://github.com/Vera-Network/vera-node-releases/releases) tab.
+If you prefer to run the binary directly on your server (without Docker), download the latest releases from the [Releases](https://github.com/Vera-SmartChain/vera-node-releases/releases) tab.
 
 **Example on Linux:**
 ```bash
-wget https://github.com/Vera-Network/vera-node-releases/releases/download/v1.0.0/vera_node_linux_amd64
+wget https://github.com/Vera-SmartChain/vera-node-releases/releases/download/v1.0.0/vera_node_linux_amd64
 chmod +x vera_node_linux_amd64
 ./vera_node_linux_amd64 --network testnet
 ```
