@@ -1,0 +1,26 @@
+[Unit]
+Description=VERA SmartChain Observer Node (Testnet)
+After=network.target
+
+[Service]
+Type=simple
+User=vera
+Group=vera
+WorkingDirectory=/var/lib/vera
+ExecStart=/usr/local/bin/vera_node --genesis /etc/vera/testnet-genesis.json --data-dir /var/lib/vera/data --rpc-port 8545 --p2p-port 26656 --seed-peers 2.25.216.206:26656
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+# Hardening / Sandboxing
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/vera/data
+CapabilityBoundingSet=
+MemoryMax=2G
+CPUQuota=95%
+
+[Install]
+WantedBy=multi-user.target
