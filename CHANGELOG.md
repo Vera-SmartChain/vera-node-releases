@@ -5,6 +5,17 @@ All notable changes to the VERA SmartChain sovereign node and CLI will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2-testnet] - 2026-10-16
+
+### Added
+- **Outbound Seed Connection Diagnostics & Logging**: `P2PService::maintain_seed_connections` now emits structured diagnostic logs with millisecond timing for seed handshake failures (TCP timeout, connection refused, Handshake send error, HandshakeAck timeout, EOF, read error, unexpected frame, or verification rejection).
+- **Stable Failure Reason Categorization (`SeedFailureType`)**: Connection failures are classified by a stable category enum (`TcpTimeout`, `TcpRefused`, `HsSend`, `AckTimeout`, `AckEof`, `AckReadErr`, `AckUnexpected`, `AckRejected`, `Admission`), preventing repetitive log spam when measured socket timings fluctuate across retries.
+- **Controlled Failure Recaps & Connecting Suppression**: Seed reconnection attempts log on initial failure (#1) and periodic recaps (#10, #20), while `Connecting to seed node` is emitted only once on the first attempt and suppressed during consecutive retries.
+- **Inbound Reconnection Recovery**: Automatically removes failure trackers and emits a recovery line (`✅ [P2P Wire] Seed <addr> reconnected after N attempts (X s)`) when a seed connects via an inbound connection.
+- **Peer Disconnection Duration & Telemetry**: Logs peer connection duration in seconds along with the last message type sent and received upon disconnect.
+
+> **Note:** Zero consensus or network protocol changes. Fully backward-compatible with v0.2.1 nodes.
+
 ## [0.2.1-testnet] - 2026-10-15
 
 ### Fixed
