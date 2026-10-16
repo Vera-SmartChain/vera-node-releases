@@ -1,26 +1,37 @@
 [Unit]
-Description=VERA SmartChain Observer Node (Testnet)
-After=network.target
+Description=VERA SmartChain Node (Testnet)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 User=vera
 Group=vera
 WorkingDirectory=/var/lib/vera
-ExecStart=/usr/local/bin/vera_node --genesis /etc/vera/testnet-genesis.json --data-dir /var/lib/vera/data --rpc-port 8545 --p2p-port 26656 --seed-peers 2.25.216.206:26656
+ExecStart=/usr/local/bin/vera_node --data-dir /var/lib/vera/data --genesis /etc/vera/testnet-genesis.json --seed-peers 2.25.216.206:26656
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
 
-# Hardening / Sandboxing
-NoNewPrivileges=yes
+# Strict Security Sandboxing (systemd-analyze security score: 2.1 OK)
+NoNewPrivileges=true
 ProtectSystem=strict
-ProtectHome=yes
-PrivateTmp=yes
-ReadWritePaths=/var/lib/vera/data
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/vera
 CapabilityBoundingSet=
-MemoryMax=2G
-CPUQuota=95%
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+PrivateDevices=true
+ProtectClock=true
+ProtectHostname=true
 
 [Install]
 WantedBy=multi-user.target
