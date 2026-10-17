@@ -5,6 +5,22 @@ All notable changes to the VERA SmartChain sovereign node and CLI will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3-testnet] - 2026-10-17
+
+### Added
+- **Community Validator Onboarding Tooling**:
+  - `sudo vera_cli keygen [--out <path>]`: Atomic key generation using direct `0600` permissions (`OpenOptions::mode(0o600)`), refusal to overwrite existing keys, and fail-hard ownership assignment to `vera:vera`.
+  - `vera_cli syncwait`: Automated node synchronization waiter comparing local block height with remote RPC.
+  - `sudo vera_cli apply-validator`: Generates cryptographically signed Ed25519 validator application blocks verified against timestamp window (7 days) and chain ID.
+  - `sudo vera_cli approve-validator`: Automated governance onboarding CLI validating application blocks, inspecting `result.allowlist`, broadcasting on-chain `allow` governance transactions, and funding 33 VERA from treasury with automatic nonce resolution and retry.
+  - `sudo vera_cli validator-status`: Dedicated validator consensus status reporting (`ACTIVE`, `JAILED`, `INACTIVE`, `UNREGISTERED`) with stake, missed blocks, and active peer counts.
+- **Dedicated Validator Systemd Unit (`vera-validator.service`)**: Signed release asset configured with `Conflicts=vera-node.service` and strict sandboxing (`ProtectSystem=strict`, `NoNewPrivileges=true`).
+- **Binary Attestation Tracking in Installer**: `install.sh` automatically records `expected_binary_sha256` in `/etc/vera/expected_binary_sha256` and installs both node and validator units.
+- **GitHub Issue Template**: Added structured `validator-application.yml` issue form for community validator onboarding.
+
+### Fixed
+- **RPC Field Mapping in CLI**: `approve-validator` and `validator-status` now correctly inspect `result.allowlist` and standard RPC fields returned by `vera_getValidators`.
+
 ## [0.2.2-testnet] - 2026-10-16
 
 ### Added

@@ -78,16 +78,28 @@ sudo chmod 755 /usr/local/bin/vera_node
 sudo cp vera_cli /usr/local/bin/vera_cli
 sudo chmod 755 /usr/local/bin/vera_cli
 
+# Record expected binary sha256 for node attestation
+NODE_SHA256=$(sha256sum /usr/local/bin/vera_node | awk '{print $1}')
+echo "$NODE_SHA256" | sudo tee /etc/vera/expected_binary_sha256 > /dev/null
+sudo chown root:vera /etc/vera/expected_binary_sha256
+sudo chmod 0644 /etc/vera/expected_binary_sha256
+
 sudo chown -R vera:vera /var/lib/vera
 
 # 7. Systemd Service Setup
 if [ -f "vera-node.service" ]; then
-    echo "⚙️ Installing systemd service unit..."
+    echo "⚙️ Installing systemd service unit (vera-node.service)..."
     sudo cp vera-node.service /etc/systemd/system/
-    sudo systemctl daemon-reload
-    echo "Service installed! To enable and start:"
-    echo "  sudo systemctl enable --now vera-node"
 fi
+if [ -f "vera-validator.service" ]; then
+    echo "⚙️ Installing systemd service unit (vera-validator.service)..."
+    sudo cp vera-validator.service /etc/systemd/system/
+fi
+sudo systemctl daemon-reload
+echo "Services installed! To enable and start regular node:"
+echo "  sudo systemctl enable --now vera-node"
+echo "To run as validator (after onboarding approval):"
+echo "  sudo systemctl enable --now vera-validator"
 
 echo "============================================================"
 echo "🎉 VERA SmartChain node installation completed successfully!"
