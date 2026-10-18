@@ -76,11 +76,69 @@ Primary key fingerprint: 37F3 9BD8 9ADE E9EE E554  9C38 8974 19EF F806 BE51
 
 ---
 
+## 🚀 Quick Start with `vera-join` (Recommended)
+
+The automated `vera-join` management script streamlines full node and validator operations, including cryptographic GPG verification, candidate block emission, staking activation, and safe automated upgrades.
+
+> 🤖 **For AI Agents & Automation:** See canonical machine-readable instructions in [`llms.txt`](https://docs.verachain.cloud/llms.txt).
+
+### 1. Download & Verify Release Bundle (v0.2.4.1-testnet)
+
+```bash
+# Create a clean directory
+mkdir -p ~/vera-v0.2.4.1-testnet && cd ~/vera-v0.2.4.1-testnet
+
+# Download all 11 canonical release artifacts
+RELEASE_URL="https://github.com/Vera-SmartChain/vera-node-releases/releases/download/v0.2.4.1-testnet"
+for f in install.sh RELEASE.json SHA256SUMS SHA256SUMS.sig testnet-genesis.json vera-join.sh vera-node.service vera-release.pub vera-validator.service vera_cli vera_node; do
+    curl -sSfLO "${RELEASE_URL}/${f}"
+done
+
+# Cryptographic GPG & Checksum Verification
+gpg --import vera-release.pub
+gpg --verify SHA256SUMS.sig SHA256SUMS
+sha256sum -c SHA256SUMS
+```
+
+### 2. Node Bootstrap & Validator Candidacy
+
+Bootstrap the node, setup system services, and print the signed candidate block:
+```bash
+sudo bash vera-join.sh --operator "@your_github_or_handle"
+```
+Submit the generated `-----BEGIN VERA VALIDATOR APPLICATION-----` block via the [Validator Application Issue Template](https://github.com/Vera-SmartChain/vera-node-releases/issues/new?template=validator-application.yml).
+
+### 3. Activation & Staking (Post-Governance Approval)
+
+Once approved on the on-chain governance allowlist and funded with 32 VERA stake allocation, activate validator mode:
+```bash
+sudo vera-join --activate
+```
+*Prerequisites: Validator key in `/etc/vera/validator_key.hex`, on-chain allowlist authorization (`allow:`), and at least 32 VERA balance.*
+
+### 4. Seamless Upgrades & Maintenance
+
+```bash
+# Manual upgrade to latest official release with automatic rollback if health checks fail
+sudo vera-join --upgrade
+
+# Enable daily automated upgrade check (opt-in systemd timer)
+sudo vera-join --enable-auto-upgrade
+
+# Disable automated upgrade timer
+sudo vera-join --disable-auto-upgrade
+
+# View full help and operational flags
+vera-join --help
+```
+
+---
+
 ## 🚀 Running a Full Node (Observer / RPC)
 
 Full nodes sync the entire blockchain state, validate transactions and blocks against consensus rules, and expose standard Ethereum-compatible JSON-RPC endpoints for local dApps and wallets.
 
-### Quick Start (Bare-Metal)
+### Manual Setup (Bare-Metal)
 
 1. Make binaries executable:
    ```bash
