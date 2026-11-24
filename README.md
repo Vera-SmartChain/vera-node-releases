@@ -2,7 +2,7 @@
 
 Official release repository for the **VERA SmartChain** (Testnet).
 
-VERA SmartChain is an enterprise-grade Layer-1 blockchain built from the ground up in Rust, featuring a high-performance BFT-PoS consensus engine, state commitment via Compact Sparse Merkle Trees (CSMT), and deterministic EVM smart contract execution powered by `revm`.
+VERA SmartChain is an open-source Layer-1 blockchain built from the ground up in Rust, featuring a high-performance BFT-PoS consensus engine, state commitment via Compact Sparse Merkle Trees (CSMT), and deterministic EVM smart contract execution powered by `revm`.
 
 This repository provides pre-compiled binaries, configuration files, cryptographic signatures, and deployment units for running observer nodes, RPC endpoints, and validator nodes on the VERA SmartChain Testnet.
 
@@ -20,7 +20,7 @@ All values below have been verified on the active, live network:
 | **Currency Symbol** | `VERA` | 18 decimals |
 | **Public RPC Endpoint** | `https://testnet-rpc.verachain.cloud` | Rate-limited (25 req/s burst, 600 req/min) |
 | **Block Explorer** | `https://testnet-explorer.verachain.cloud` | Real-time blocks, transactions, and contracts |
-| **Official Faucet** | `https://testnet-faucet.verachain.cloud` (or `https://verachain.cloud/staking`) | Rate-limited on-chain faucet (1 VERA / 24h per IP/wallet) |
+| **Official Faucet** | `https://testnet-faucet.verachain.cloud` | Rate-limited on-chain faucet (1 VERA / 24h per IP/wallet) |
 | **P2P Seed Peer** | `2.25.216.206:26656` | Default bootstrap node |
 | **Block Production** | Event-driven BFT consensus | Blocks proposed and finalized upon pending transactions |
 | **Minimum Validator Stake** | `32 VERA` (`32000000000000000000` wei) | Enforced on-chain |
@@ -82,21 +82,22 @@ The automated `vera-join` management script streamlines full node and validator 
 
 > 🤖 **For AI Agents & Automation:** See canonical machine-readable instructions in [`llms.txt`](https://docs.verachain.cloud/llms.txt).
 
-### 1. Download & Verify Release Bundle (v0.2.4.1-testnet)
+### 1. Download & Verify Release Bundle
 
 ```bash
 # Create a clean directory
-mkdir -p ~/vera-v0.2.4.1-testnet && cd ~/vera-v0.2.4.1-testnet
+VER=v0.3.0-testnet   # use the latest release: https://github.com/Vera-SmartChain/vera-node-releases/releases/latest
+mkdir -p ~/vera-$VER && cd ~/vera-$VER
 
 # Download all 11 canonical release artifacts
-RELEASE_URL="https://github.com/Vera-SmartChain/vera-node-releases/releases/download/v0.2.4.1-testnet"
+RELEASE_URL="https://github.com/Vera-SmartChain/vera-node-releases/releases/download/$VER"
 for f in install.sh RELEASE.json SHA256SUMS SHA256SUMS.sig testnet-genesis.json vera-join.sh vera-node.service vera-release.pub vera-validator.service vera_cli vera_node; do
     curl -sSfLO "${RELEASE_URL}/${f}"
 done
 
 # Cryptographic GPG & Checksum Verification
 gpg --import vera-release.pub
-gpg --verify SHA256SUMS.sig SHA256SUMS
+gpg --status-fd 1 --verify SHA256SUMS.sig SHA256SUMS | grep "VALIDSIG 37F39BD89ADEE9EEE5549C38897419EFF806BE51 "   # must print a line
 sha256sum -c SHA256SUMS
 ```
 
@@ -201,7 +202,7 @@ For 24/7 reliability, run `vera_node` under a dedicated, non-root system user wi
 
 ## ⚖️ How to Become a Validator
 
-VERA SmartChain uses a permissioned validator set on testnet to ensure enterprise-grade stability and prevent Sybil degradation of BFT consensus.
+VERA SmartChain uses a permissioned validator set on testnet to ensure stability and prevent Sybil degradation of BFT consensus.
 
 1. **Generate your cryptographic validator key pair:**
    ```bash
@@ -223,8 +224,8 @@ VERA SmartChain uses a permissioned validator set on testnet to ensure enterpris
 3. **Deposit Validator Stake (Minimum 32 VERA):**
    Once funded and authorized on-chain, bond your stake directly using `vera_cli`:
    ```bash
-   # Syntax: ./vera_cli stake <private_key_hex> <amount_wei>
-   ./vera_cli stake <YOUR_PRIVATE_KEY_HEX> 32000000000000000000
+   # Syntax: ./vera_cli stake --key-file <path> <amount_wei>
+   ./vera_cli stake --key-file /etc/vera/validator_key.hex 32000000000000000000
    ```
 
 4. **Start Node in Validator Mode:**
@@ -233,8 +234,8 @@ VERA SmartChain uses a permissioned validator set on testnet to ensure enterpris
 5. **Unstaking:**
    To unstake and exit the validator set:
    ```bash
-   # Syntax: ./vera_cli unstake <private_key_hex> <amount_wei>
-   ./vera_cli unstake <YOUR_PRIVATE_KEY_HEX> 32000000000000000000
+   # Syntax: ./vera_cli unstake --key-file <path> <amount_wei>
+   ./vera_cli unstake --key-file /etc/vera/validator_key.hex 32000000000000000000
    ```
    Unbonding completes automatically after 5 blocks on Testnet.
 
@@ -251,7 +252,7 @@ VERA SmartChain is fully compatible with the Ethereum Virtual Machine (EVM) via 
 - **MetaMask:** Add custom network using Chain ID `83721` (`0x14709`).
 - **Events & Logs:** Full support for `eth_getLogs` with Bloom filter indexing (up to 5,000 blocks per query).
 
-Refer to the [vera-contracts-examples](https://github.com/Vera-SmartChain/vera-contracts-examples) repository for complete starter kits with automated deployment scripts and tests.
+See the [developer documentation](https://docs.verachain.cloud/) for Hardhat and Foundry setup and deployment examples.
 
 ---
 
@@ -273,5 +274,5 @@ See the [NOTICE](NOTICE) file for additional attribution notices.
 
 ---
 
-*VERA SmartChain — Deterministic, Verifiable, Enterprise-Grade.*  
+*VERA SmartChain — Deterministic and verifiable.*  
 *Website: [verachain.cloud](https://verachain.cloud) • Inquiries: [contact@verachain.cloud](mailto:contact@verachain.cloud)*
